@@ -1,6 +1,6 @@
 module.exports = {
   Token: "5330623239:AAFxo5FYfQoXjU7Bd8LzRCL_bcvB6YIkT6Y",
-  timePolling: "3600000",
+  timePolling: "21600000",
   BotCommands: [
     { command: "/start", description: "subscribe to workplace" },
     { command: "/myworkplaces", description: "get a list of your workplaces" },
