@@ -15,9 +15,11 @@ bot.onText(/\/start/, async (msg) => {
   if (workplaces?.length) {
     bot.sendMessage(helper.getChaitId(msg), answer.default.text, {
       reply_markup: {
-        inline_keyboard: workplaces.map((wplace) => [
-          helper.getInlineKeyboardButton(wplace.name, wplace.id),
-        ]),
+        inline_keyboard: workplaces
+          .map((wplace) => [
+            helper.getInlineKeyboardButton(wplace.name, wplace.id),
+          ])
+          .concat([[config.commands.start.msg.default.btn]]),
       },
     });
   } else {
@@ -74,8 +76,13 @@ bot.on("callback_query", (query) => {
     case config.commands.start.msg.default.text: {
       const answer = config.commands.start.msg;
 
+      if (query.data === config.commands.start.msg.default.btn.callback_data) {
+        bot.deleteMessage(query.message.chat.id, query.message.message_id);
+        break;
+      }
       // Показываем прогресс обработки нажатия
       bot.sendChatAction(query.message.chat.id, "typing");
+
       //Проверяем подписан ли пользователь на workplaces
       db.isWorkplaceUser(helper.getUserId(query), query.data)
         .then((result) => {
@@ -105,7 +112,12 @@ bot.on("callback_query", (query) => {
               chat_id: query.message.chat.id,
             })
             .then((res) => {
-              if (!res?.reply_markup)
+              if (
+                !res?.reply_markup ||
+                (res.reply_markup.inline_keyboard.length === 1 &&
+                  res.reply_markup.inline_keyboard[0][0].text ===
+                    config.commands.start.msg.default.btn.text)
+              )
                 bot.deleteMessage(res.chat.id, res.message_id);
             });
         })
