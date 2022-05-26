@@ -32,29 +32,33 @@ class Repository {
    * @returns {Promise<Workplace>}
    */
   async getAllWorkplacesWithoutUser(userId) {
-    // Get all workplace ids subscribed to by the user
-    let user_workplace = await db
-      .collection("user_workplace")
-      .where("userId", "==", String(userId))
-      .get();
+    try {
+      // Get all workplace ids subscribed to by the user
+      let user_workplace = await db
+        .collection("user_workplace")
+        .where("userId", "==", String(userId))
+        .get();
 
-    // Get all workplaces
-    const workplaces = await db
-      .collection("workplaces")
-      .withConverter(Workplace.workplaceConverter)
-      .get();
+      // Get all workplaces
+      const workplaces = await db
+        .collection("workplaces")
+        .withConverter(Workplace.workplaceConverter)
+        .get();
 
-    // Check if the user's workplaceId is included in the general list of workplaces
-    return await workplaces.docs
-      .filter(
-        (doc) =>
-          // If the worplace exists and the user is not subscribed to it, then we return an array of workspaces.
-          doc.exists &&
-          !user_workplace.docs.filter(
-            (_doc) => _doc.data().workplaceId === doc.id
-          ).length
-      )
-      .map((doc) => doc.data());
+      // Check if the user's workplaceId is included in the general list of workplaces
+      return await workplaces.docs
+        .filter(
+          (doc) =>
+            // If the worplace exists and the user is not subscribed to it, then we return an array of workspaces.
+            doc.exists &&
+            !user_workplace.docs.filter(
+              (_doc) => _doc.data().workplaceId === doc.id
+            ).length
+        )
+        .map((doc) => doc.data());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -64,26 +68,30 @@ class Repository {
    */
 
   async getAllWorkplacesForUser(userId) {
-    // Get all workplace ids subscribed to by the user
-    let user_workplace = await db
-      .collection("user_workplace")
-      .where("userId", "==", String(userId))
-      .get();
+    try {
+      // Get all workplace ids subscribed to by the user
+      let user_workplace = await db
+        .collection("user_workplace")
+        .where("userId", "==", String(userId))
+        .get();
 
-    // Get all workplaces for the user
-    let workplaces = await Promise.all(
-      user_workplace.docs
-        .filter((doc) => doc.exists)
-        .map((doc) =>
-          db
-            .collection("workplaces")
-            .withConverter(Workplace.workplaceConverter)
-            .doc(doc.data().workplaceId)
-            .get()
-        )
-    );
-    //Return the user workplaces
-    return workplaces.filter((doc) => doc.exists).map((doc) => doc.data());
+      // Get all workplaces for the user
+      let workplaces = await Promise.all(
+        user_workplace.docs
+          .filter((doc) => doc.exists)
+          .map((doc) =>
+            db
+              .collection("workplaces")
+              .withConverter(Workplace.workplaceConverter)
+              .doc(doc.data().workplaceId)
+              .get()
+          )
+      );
+      //Return the user workplaces
+      return workplaces.filter((doc) => doc.exists).map((doc) => doc.data());
+    } catch (error) {
+      console.log(error);
+    }
   }
   /**
    * This method adds a record to the database that the user subscribed to the workplace
@@ -91,8 +99,14 @@ class Repository {
    * @param {String} workplaceId
    */
   async setWorkplaceForUser(userId, workplaceId) {
-    const user_workplaceRef = db.doc(`user_workplace/${userId}_${workplaceId}`);
-    await user_workplaceRef.set({ userId, workplaceId });
+    try {
+      const user_workplaceRef = db.doc(
+        `user_workplace/${userId}_${workplaceId}`
+      );
+      await user_workplaceRef.set({ userId, workplaceId });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -102,15 +116,19 @@ class Repository {
    * @returns
    */
   async isWorkplaceUser(userId, workplaceId) {
-    let user_workplace = await db
-      .collection("user_workplace")
-      .doc(`${userId}_${workplaceId}`)
-      .get();
-    return (
-      user_workplace.exists &&
-      user_workplace.data().userId === userId &&
-      user_workplace.data().workplaceId
-    );
+    try {
+      let user_workplace = await db
+        .collection("user_workplace")
+        .doc(`${userId}_${workplaceId}`)
+        .get();
+      return (
+        user_workplace.exists &&
+        user_workplace.data().userId === userId &&
+        user_workplace.data().workplaceId
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   /**
@@ -124,14 +142,31 @@ class Repository {
   }
 
   async getUserIdsForWorkplace(workplaceId) {
-    const user_workplaceRef = await db
-      .collection("user_workplace")
-      .where("workplaceId", "==", workplaceId)
-      .get();
+    try {
+      const user_workplaceRef = await db
+        .collection("user_workplace")
+        .where("workplaceId", "==", workplaceId)
+        .get();
 
-    return user_workplaceRef.docs
-      .filter((user_workplace) => user_workplace.exists)
-      .map((user_workplace) => user_workplace.data().userId);
+      return user_workplaceRef.docs
+        .filter((user_workplace) => user_workplace.exists)
+        .map((user_workplace) => user_workplace.data().userId);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getWorkplace(workplaceId) {
+    try {
+      const workplace = await db
+        .collection("workplaces")
+        .withConverter(Workplace.workplaceConverter)
+        .doc(workplaceId)
+        .get();
+      return workplace.data();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // ================= Reminder API ====================
@@ -141,29 +176,50 @@ class Repository {
    * @returns {Promise<Array<Reminder>}
    */
   async getAllUpToDateReminder(time) {
-    // Get all up-to-date reminders
-    const reminderRef = await db
-      .collection("reminders")
-      .withConverter(Reminder.reminderConverter)
-      .where("time", ">", time)
-      .get();
+    try {
+      // Get all up-to-date reminders
+      const reminderRef = await db
+        .collection("reminders")
+        .withConverter(Reminder.reminderConverter)
+        .where("time", ">", time)
+        .get();
 
-    return reminderRef.docs
-      .filter((reminder) => reminder.exists)
-      .map((reminder) => reminder.data());
+      return reminderRef.docs
+        .filter((reminder) => reminder.exists)
+        .map((reminder) => reminder.data());
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // ============== Answer to Reminder API ===============
-/**
- * This method of saving to the database is the user's response to reminder
- * @param {AnswerToReminder} answer 
- */
-  async setAnswerToReminder(reminderId, reminderLabel, answer, createdAt, memberId) {
-    const answerToReminder = new AnswerToReminder(null, reminderId, reminderLabel, answer, createdAt, memberId);
+  /**
+   * This method of saving to the database is the user's response to reminder
+   * @param {AnswerToReminder} answer
+   */
+  async setAnswerToReminder(
+    reminderId,
+    reminderLabel,
+    answer,
+    createdAt,
+    memberId
+  ) {
+    try {
+      const answerToReminder = new AnswerToReminder(
+        null,
+        reminderId,
+        reminderLabel,
+        answer,
+        createdAt,
+        memberId
+      );
 
       db.collection("answer_to_reminder")
         .withConverter(AnswerToReminder.AnswerToReminderConverter)
         .add(answerToReminder);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 

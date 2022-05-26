@@ -1,0 +1,1 @@
+{"version":"1.0.0","name":"telegram-bot","dependencies":{"firebase-admin":{"version":"10.2.0"},"firebase":{"version":"9.7.0"},"json-loader":{"version":"0.5.7"},"node-telegram-bot-api":{"version":"0.57.0"},"nodemon":{"version":"2.0.16"},"uid":{"version":"2.0.0"}}}

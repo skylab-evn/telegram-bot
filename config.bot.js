@@ -1,34 +1,40 @@
 module.exports = {
   Token: "5330623239:AAFxo5FYfQoXjU7Bd8LzRCL_bcvB6YIkT6Y",
-  timePolling: "1000",
+  timePolling: "10000",
   BotCommands: [
     { command: "/start", description: "subscribe to workplace" },
     { command: "/myworkplaces", description: "get a list of your workplaces" },
-    { command: "/remind", description: "create a reminder" },
-    { command: "/delete", description: "delete a list workplaces" },
+    // { command: "/remind", description: "create a reminder" },
+    // { command: "/delete", description: "delete a list workplaces" },
     { command: "/help", description: "get help" },
   ],
   commands: {
     start: {
-        msg:{
-            default:{
-                text: "Select the workplace you want to subscribe to"
-            },
-            noOption:{
-                text: "There are currently no workplaces you can subscribe to",
-                stickerId: "CAACAgIAAxkBAAEBFNlie6jWNC2LEgUOOiwFvZEPHXSGjQACegADwZxgDNBgXYlUQrz-JAQ"
-            },
-            subscribe: {
-                already: "You are already following ",
-                ready: "You subscribed to"
-            }
-        }
+      msg: {
+        default: {
+          text: "Select the workplace you want to subscribe to",
+        },
+        noOption: {
+          text: "There are currently no workplaces you can subscribe to",
+          stickerId:
+            "CAACAgIAAxkBAAEBFNlie6jWNC2LEgUOOiwFvZEPHXSGjQACegADwZxgDNBgXYlUQrz-JAQ",
+        },
+        subscribe: {
+          already: "You are already following ",
+          ready: "You subscribed to",
+        },
+      },
     },
     help: {
-      description: `Here is what I can do:\n \n/start - subscribe to workplace\n\n/myworkplaces - get a list of your workplaces \n\n/help - get help`,
+      description: `Here is what I can do: \n/start - subscribe to workplace\n/myworkplaces - get a list of your workplaces \n/help - get help`,
     },
     remind: {
       description: "",
+      msg: {
+        queston: {
+          stickerId: "CAACAgIAAxkBAAEBGxBij2F-KekP40OUn8G-kB0jxchYnwACdBkAAv3EyUkrrD3DFv2fpSQE"
+        }
+      }
     },
     myworkplaces: {
       msg: {
@@ -45,10 +51,11 @@ module.exports = {
     other: {
       msg: {
         default: {
-          text: "Ты не ответил на вопрос вовремя. \nЗа тобой уже выехали",
-          stickerId: "CAACAgIAAxkBAAEBFPNifO7FSzIxlKMn6P_c5EtX8tlO-wAC9gADVp29CvfbTiFAPqWKJAQ"
-        }
-      }
-    }
+          text: "The question is not relevant.",
+          stickerId:
+            "CAACAgIAAxkBAAEBGwxij2CFgG1gg814dfoF1lsN1rggyQAC5hcAAvP2gUnUb8mtTJzF0SQE",
+        },
+      },
+    },
   },
 };
