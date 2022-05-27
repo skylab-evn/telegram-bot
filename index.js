@@ -58,6 +58,10 @@ bot.onText(/\/help/, (msg) => {
   });
 });
 
+bot.onText(/\/time/, (msg) => {
+  bot.sendMessage(helper.getChaitId(msg), "Time: " + new Date());
+});
+
 // Обработчик нажатий на callback кнопки
 bot.on("callback_query", (query) => {
   const keyboard = { reply_markup: null, pressedButton: null };
